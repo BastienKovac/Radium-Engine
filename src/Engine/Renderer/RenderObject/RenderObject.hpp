@@ -9,6 +9,7 @@
 
 #include <Core/Index/IndexedObject.hpp>
 #include <Core/Math/LinearAlgebra.hpp>
+#include <Core/Math/Obb.hpp>
 
 #include <Engine/Renderer/RenderObject/RenderObjectTypes.hpp>
 #include <Engine/Renderer/RenderTechnique/RenderTechnique.hpp>
@@ -119,6 +120,8 @@ namespace Ra
             Core::Aabb getAabb() const;
             Core::Aabb getMeshAabb() const;
 
+            Core::Obb getObb() const;
+
             void setLocalTransform( const Core::Transform& transform );
             void setLocalTransform( const Core::Matrix4& transform );
             const Core::Transform& getLocalTransform() const;
@@ -142,6 +145,9 @@ namespace Ra
             RenderObjectType m_type;
             std::shared_ptr<RenderTechnique> m_renderTechnique;
             std::shared_ptr<Mesh> m_mesh;
+
+            void updateLocalOBB();
+            std::unique_ptr<Core::Obb> m_obb;
 
             mutable std::mutex m_updateMutex;
 

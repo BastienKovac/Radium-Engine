@@ -28,6 +28,7 @@ namespace Ra {
         m_renderTechnique(nullptr), m_mesh(nullptr), m_lifetime(lifetime), m_visible(true), m_pickable(true),
         m_xray(false), m_transparent(false), m_dirty(true), m_hasLifetime(lifetime > 0)
         {
+            updateLocalOBB();
         }
         
         RenderObject::~RenderObject()
@@ -223,15 +224,22 @@ namespace Ra {
         {
             return Core::MeshUtils::getAabb(m_mesh->getGeometry());
         }
+
+        Core::Obb RenderObject::getObb() const
+        {
+            return *m_obb.get();
+        }
         
         void RenderObject::setLocalTransform(const Core::Transform &transform)
         {
             m_localTransform = transform;
+            updateLocalOBB();
         }
         
         void RenderObject::setLocalTransform(const Core::Matrix4 &transform)
         {
             m_localTransform = Core::Transform(transform);
+            updateLocalOBB();
         }
         
         const Core::Transform &RenderObject::getLocalTransform() const
@@ -291,6 +299,13 @@ namespace Ra {
                 // render
                 getMesh()->render();
             }
+        }
+
+        void RenderObject::updateLocalOBB()
+        {
+            // TODO : Fixme, segfault when starting Radium for the first time (PointCloud line 58)
+            // points vector not initialized ?
+            // m_obb.reset(new Core::Obb(getAabb(), getTransform()));
         }
         
     } // namespace Engine

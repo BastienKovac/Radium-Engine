@@ -223,13 +223,17 @@ namespace Ra {
             m_uiRenderObjects.clear();
             m_xrayRenderObjects.clear();
 
+            // Might not be a good idea to reset the filter here
+            m_cullingFilter.reset();
+            m_cullingFilter.addFrostrum(renderData);
+
             m_roMgr->getRenderObjectsByType( renderData, m_fancyRenderObjects, RenderObjectType::Fancy );
             m_roMgr->getRenderObjectsByType( renderData, m_debugRenderObjects, RenderObjectType::Debug );
             m_roMgr->getRenderObjectsByType( renderData, m_uiRenderObjects,    RenderObjectType::UI );
 
             for ( auto it = m_fancyRenderObjects.begin(); it != m_fancyRenderObjects.end(); )
             {
-                if ( (*it)->isXRay() )
+                if ( (*it)->isXRay() && (m_cullingFilter.intersectsFrostrums(*it) && m_enableCulling) )
                 {
                     m_xrayRenderObjects.push_back( *it );
                     it = m_fancyRenderObjects.erase( it );
@@ -242,7 +246,7 @@ namespace Ra {
 
             for ( auto it = m_debugRenderObjects.begin(); it != m_debugRenderObjects.end(); )
             {
-                if ( (*it)->isXRay() )
+                if ( (*it)->isXRay() && (m_cullingFilter.intersectsFrostrums(*it) && m_enableCulling) )
                 {
                     m_xrayRenderObjects.push_back( *it );
                     it = m_debugRenderObjects.erase( it );
@@ -255,7 +259,7 @@ namespace Ra {
 
             for ( auto it = m_uiRenderObjects.begin(); it != m_uiRenderObjects.end(); )
             {
-                if ( (*it)->isXRay() )
+                if ( (*it)->isXRay() && (m_cullingFilter.intersectsFrostrums(*it) && m_enableCulling) )
                 {
                     m_xrayRenderObjects.push_back( *it );
                     it = m_uiRenderObjects.erase( it );

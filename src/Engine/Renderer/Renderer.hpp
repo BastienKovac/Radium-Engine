@@ -14,6 +14,8 @@
 #include <Core/Event/EventEnums.hpp>
 #include <Core/File/FileData.hpp>
 
+#include <Engine/Culling/cullingfilter.hpp>
+
 namespace Ra
 {
     namespace Core
@@ -139,6 +141,11 @@ namespace Ra
             inline void enablePostProcess(bool enabled)
             {
                 m_postProcessEnabled = enabled;
+            }
+
+            inline void enableCulling(bool enabled)
+            {
+                m_enableCulling = enabled;
             }
 
             /**
@@ -364,7 +371,7 @@ namespace Ra
             bool m_drawDebug;           // Should we render debug stuff ?
             bool m_wireframe;           // Are we rendering in "real" wireframe mode
             bool m_postProcessEnabled;  // Should we do post processing ?
-
+            bool m_enableCulling;       // Should we do culling ?
 
         private:
             // Qt has the nice idea to bind an fbo before giving you the opengl context,
@@ -388,6 +395,9 @@ namespace Ra
             std::vector<PickingQuery>  m_pickingQueries;
             std::vector<PickingQuery>  m_lastFramePickingQueries;
             std::vector<PickingResult> m_pickingResults;
+
+            // Culling filter (basic)
+            CullingFilter m_cullingFilter;
         };
 
     } // namespace Engine
