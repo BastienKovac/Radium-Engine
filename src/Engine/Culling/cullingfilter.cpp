@@ -6,18 +6,18 @@ namespace Ra
     namespace Engine
     {
 
-        Frostrum::Frostrum(const RenderData &data)
+        Frostrum::Frostrum()
         {
-            updateCoordinates(data);
+
         }
 
-        bool Frostrum::intersects(const std::shared_ptr<RenderObject> object)
+        bool Frostrum::intersects(const Core::Aabb aabb)
         {
             // TODO : Intersection algorithm goes here
             return true;
         }
 
-        void Frostrum::updateCoordinates(const RenderData &data)
+        void Frostrum::updateFrostrum(const RenderData &data)
         {
             // TODO : Compute the 8 points of the frostrum from the RenderData
         }
@@ -27,29 +27,14 @@ namespace Ra
 
         }
 
-        void CullingFilter::addFrostrum(const RenderData &data)
+        void CullingFilter::setFrostrum(const RenderData &data)
         {
-            m_frostrum.push_back(Frostrum(data));
+            m_frostrum.updateFrostrum(data);
         }
 
-        void CullingFilter::removeFrostrum(int index)
+        bool CullingFilter::intersectsFrostrum(const Core::Aabb aabb)
         {
-            m_frostrum.erase(m_frostrum.begin() + index);
-        }
-
-        void CullingFilter::reset()
-        {
-            m_frostrum.clear();
-        }
-
-        bool CullingFilter::intersectsFrostrums(const std::shared_ptr<RenderObject> object)
-        {
-            for (auto frostrum : m_frostrum)
-            {
-                if (!frostrum.intersects(object))
-                    return false;
-            }
-            return true;
+            return m_frostrum.intersects(aabb);
         }
 
     }

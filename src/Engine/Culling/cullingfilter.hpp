@@ -19,14 +19,13 @@ namespace Ra
         class Frostrum
         {
         public:
-            Frostrum(const RenderData &data);
+            Frostrum();
 
-            bool intersects(const std::shared_ptr<RenderObject> object);
+            void updateFrostrum(const RenderData &data);
+
+            bool intersects(const Core::Aabb aabb);
 
         private:
-
-            void updateCoordinates(const RenderData &data);
-
             // Points of the Frostrum
             Core::Vector3 m_a, m_b, m_c, m_d, m_e, m_f, m_g, m_h;
 
@@ -37,19 +36,13 @@ namespace Ra
         public:
             CullingFilter();
 
-            // std::shared_ptr<RenderObject> defined as RenderObjectPtr (protected) in Renderer.hpp => Make it public ?
-            bool intersectsFrostrums(const std::shared_ptr<RenderObject> object);
+            bool intersectsFrostrum(const Core::Aabb aabb);
 
-            void addFrostrum(const RenderData &data);
-
-            void reset();
-
-            // TODO : Maybe index is not the best way ?
-            void removeFrostrum(int index);
+            void setFrostrum(const RenderData &data);
 
         private:
 
-            std::vector<Frostrum> m_frostrum;
+            Frostrum m_frostrum;
         };
 
     } // namespace Engine

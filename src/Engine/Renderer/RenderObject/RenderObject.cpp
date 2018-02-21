@@ -28,7 +28,7 @@ namespace Ra {
         m_renderTechnique(nullptr), m_mesh(nullptr), m_lifetime(lifetime), m_visible(true), m_pickable(true),
         m_xray(false), m_transparent(false), m_dirty(true), m_hasLifetime(lifetime > 0)
         {
-            updateLocalOBB();
+
         }
         
         RenderObject::~RenderObject()
@@ -150,6 +150,12 @@ namespace Ra {
         {
             return m_transparent;
         }
+
+        void RenderObject::setLifetime(int lifetime)
+        {
+            m_lifetime = lifetime;
+            m_hasLifetime = lifetime > 0;
+        }
         
         bool RenderObject::isDirty() const
         {
@@ -185,6 +191,7 @@ namespace Ra {
         void RenderObject::setMesh(const std::shared_ptr<Mesh> &mesh)
         {
             m_mesh = mesh;
+            m_aabb = Core::MeshUtils::getAabb(m_mesh->getGeometry());
         }
         
         std::shared_ptr<const Mesh> RenderObject::getMesh() const
@@ -209,12 +216,11 @@ namespace Ra {
         
         Core::Aabb RenderObject::getAabb() const
         {
-            Core::Aabb aabb = Core::MeshUtils::getAabb(m_mesh->getGeometry());
             Core::Aabb result;
             
             for (int i = 0; i < 8; ++i)
             {
-                result.extend(getTransform() * aabb.corner((Core::Aabb::CornerType) i));
+                result.extend(getTransform() * m_aabb.corner((Core::Aabb::CornerType) i));
             }
             
             return result;
@@ -222,24 +228,17 @@ namespace Ra {
         
         Core::Aabb RenderObject::getMeshAabb() const
         {
-            return Core::MeshUtils::getAabb(m_mesh->getGeometry());
-        }
-
-        Core::Obb RenderObject::getObb() const
-        {
-            return *m_obb.get();
+            return m_aabb;
         }
         
         void RenderObject::setLocalTransform(const Core::Transform &transform)
         {
             m_localTransform = transform;
-            updateLocalOBB();
         }
         
         void RenderObject::setLocalTransform(const Core::Matrix4 &transform)
         {
             m_localTransform = Core::Transform(transform);
-            updateLocalOBB();
         }
         
         const Core::Transform &RenderObject::getLocalTransform() const
@@ -299,13 +298,6 @@ namespace Ra {
                 // render
                 getMesh()->render();
             }
-        }
-
-        void RenderObject::updateLocalOBB()
-        {
-            // TODO : Fixme, segfault when starting Radium for the first time (PointCloud line 58)
-            // points vector not initialized ?
-            // m_obb.reset(new Core::Obb(getAabb(), getTransform()));
         }
         
     } // namespace Engine

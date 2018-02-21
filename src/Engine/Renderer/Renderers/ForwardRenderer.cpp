@@ -189,11 +189,17 @@ namespace Ra {
             
             GL_ASSERT(glPointSize(3.));
             
+            // Updates used camera in culling filter
+            m_cullingFilter.setFrostrum(renderData);
+
             // Set in RenderParam the configuration about ambiant lighting (instead of hard constant direclty in shaders)
             RenderParameters params;
             for (const auto &ro : m_fancyRenderObjects)
             {
-                ro->render(params, renderData, RenderTechnique::Z_PREPASS);
+                if (m_enableCulling && m_cullingFilter.intersectsFrostrum(ro->getAabb()))
+                {
+                    ro->render(params, renderData, RenderTechnique::Z_PREPASS);
+                }
             }
             
             // Light pass

@@ -9,7 +9,6 @@
 
 #include <Core/Index/IndexedObject.hpp>
 #include <Core/Math/LinearAlgebra.hpp>
-#include <Core/Math/Obb.hpp>
 
 #include <Engine/Renderer/RenderObject/RenderObjectTypes.hpp>
 #include <Engine/Renderer/RenderTechnique/RenderTechnique.hpp>
@@ -104,6 +103,8 @@ namespace Ra
             void toggleTransparent();
             bool isTransparent() const;
 
+            void setLifetime(int lifetime);
+
             bool isDirty() const;
 
             void setRenderTechnique( const std::shared_ptr<RenderTechnique>& technique );
@@ -119,8 +120,6 @@ namespace Ra
 
             Core::Aabb getAabb() const;
             Core::Aabb getMeshAabb() const;
-
-            Core::Obb getObb() const;
 
             void setLocalTransform( const Core::Transform& transform );
             void setLocalTransform( const Core::Matrix4& transform );
@@ -146,8 +145,8 @@ namespace Ra
             std::shared_ptr<RenderTechnique> m_renderTechnique;
             std::shared_ptr<Mesh> m_mesh;
 
-            void updateLocalOBB();
-            std::unique_ptr<Core::Obb> m_obb;
+            // No ptr ?
+            Core::Aabb m_aabb;
 
             mutable std::mutex m_updateMutex;
 

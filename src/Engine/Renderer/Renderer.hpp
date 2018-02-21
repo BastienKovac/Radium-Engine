@@ -373,6 +373,9 @@ namespace Ra
             bool m_postProcessEnabled;  // Should we do post processing ?
             bool m_enableCulling;       // Should we do culling ?
 
+            // Culling filter (basic)
+            CullingFilter m_cullingFilter;
+
         private:
             // Qt has the nice idea to bind an fbo before giving you the opengl context,
             // this flag is used to save it (and render the final screen on it)
@@ -396,8 +399,6 @@ namespace Ra
             std::vector<PickingQuery>  m_lastFramePickingQueries;
             std::vector<PickingResult> m_pickingResults;
 
-            // Culling filter (basic)
-            CullingFilter m_cullingFilter;
         };
 
     } // namespace Engine
