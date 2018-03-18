@@ -6,6 +6,7 @@
 
 // Solving circular dependency for RenderData
 #include <Engine/Renderer/Renderer.hpp>
+#include <Core/Math/RayCast.hpp>
 
 namespace Ra
 {
@@ -70,8 +71,25 @@ namespace Ra
             for(int i = 0; i<3; i++) {
                 if(!intersectsDim(i, aabb)) return false;
             }
+
+            // If the first test pass, this one use raycast to get rid of the inaccuracy mentioned above
+            int count = 0;
+            for (int i = 0; i < 6; i++) {
+                if(Core::RayCast::vsPlane(new Core::Ray(0.0f, 0.0f, 1.0f), planesOffsets[i], planesNormals[i], NULL))
+                    count++;
+            }
+            //Core::RayCast::vsPlane()
             
-            return true;
+            return (count%2 == 1);
+        }
+
+        void Frostrum::updateMinMax(Core::Vector4 point) {
+            if(point[0] < min[0]) min[0] = point[0];
+            if(point[1] < min[1]) min[1] = point[1];
+            if(point[2] < min[2]) min[2] = point[2];
+            if(point[0] > max[0]) max[0] = point[0];
+            if(point[1] > max[1]) max[1] = point[1];
+            if(point[2] > max[2]) max[2] = point[2];
         }
 
         void Frostrum::updateFrostrum(const RenderData &data)
@@ -88,54 +106,19 @@ namespace Ra
             min[1] = m_a[1];
             min[2] = m_a[2];
             m_b = inverseProj * inverseView *  Core::Vector4f(1.0f,1.0f,-1.0f, 1.0f);
-            if(m_b[0] < min[0]) min[0] = m_b[0];
-            if(m_b[1] < min[1]) min[1] = m_b[1];
-            if(m_b[2] < min[2]) min[2] = m_b[2];
-            if(m_b[0] < min[0]) min[0] = m_b[0];
-            if(m_b[1] < min[1]) min[1] = m_b[1];
-            if(m_b[2] < min[2]) min[2] = m_b[2];
+            updateMinMax(m_b);
             m_c = inverseProj * inverseView *  Core::Vector4(1.0f,-1.0f,1.0f, 1.0f);
-            if(m_c[0] < min[0]) min[0] = m_c[0];
-            if(m_c[1] < min[1]) min[1] = m_c[1];
-            if(m_c[2] < min[2]) min[2] = m_c[2];
-            if(m_c[0] < min[0]) min[0] = m_c[0];
-            if(m_c[1] < min[1]) min[1] = m_c[1];
-            if(m_c[2] < min[2]) min[2] = m_c[2];
+            updateMinMax(m_c);
             m_d = inverseProj * inverseView *  Core::Vector4(1.0f,-1.0f,-1.0f, 1.0f);
-            if(m_d[0] < min[0]) min[0] = m_d[0];
-            if(m_d[1] < min[1]) min[1] = m_d[1];
-            if(m_d[2] < min[2]) min[2] = m_d[2];
-            if(m_d[0] < min[0]) min[0] = m_d[0];
-            if(m_d[1] < min[1]) min[1] = m_d[1];
-            if(m_d[2] < min[2]) min[2] = m_d[2];
+            updateMinMax(m_d);
             m_e = inverseProj * inverseView *  Core::Vector4(-1.0f,1.0f,1.0f, 1.0f);
-            if(m_e[0] < min[0]) min[0] = m_e[0];
-            if(m_e[1] < min[1]) min[1] = m_e[1];
-            if(m_e[2] < min[2]) min[2] = m_e[2];
-            if(m_e[0] < min[0]) min[0] = m_e[0];
-            if(m_e[1] < min[1]) min[1] = m_e[1];
-            if(m_e[2] < min[2]) min[2] = m_e[2];
+            updateMinMax(m_e);
             m_f = inverseProj * inverseView *  Core::Vector4(-1.0f,1.0f,-1.0f, 1.0f);
-            if(m_f[0] < min[0]) min[0] = m_f[0];
-            if(m_f[1] < min[1]) min[1] = m_f[1];
-            if(m_f[2] < min[2]) min[2] = m_f[2];
-            if(m_f[0] < min[0]) min[0] = m_f[0];
-            if(m_f[1] < min[1]) min[1] = m_f[1];
-            if(m_f[2] < min[2]) min[2] = m_f[2];
+            updateMinMax(m_f);
             m_g = inverseProj * inverseView *  Core::Vector4(-1.0f,-1.0f,1.0f, 1.0f);
-            if(m_g[0] < min[0]) min[0] = m_g[0];
-            if(m_g[1] < min[1]) min[1] = m_g[1];
-            if(m_g[2] < min[2]) min[2] = m_g[2];
-            if(m_g[0] < min[0]) min[0] = m_g[0];
-            if(m_g[1] < min[1]) min[1] = m_g[1];
-            if(m_g[2] < min[2]) min[2] = m_g[2];
+            updateMinMax(m_g);
             m_h = inverseProj * inverseView *  Core::Vector4(-1.0f,-1.0f,-1.0f, 1.0f);
-            if(m_h[0] < min[0]) min[0] = m_h[0];
-            if(m_h[1] < min[1]) min[1] = m_h[1];
-            if(m_h[2] < min[2]) min[2] = m_h[2];
-            if(m_h[0] < min[0]) min[0] = m_h[0];
-            if(m_h[1] < min[1]) min[1] = m_h[1];
-            if(m_h[2] < min[2]) min[2] = m_h[2];
+            updateMinMax(m_h);
         }
 
         CullingFilter::CullingFilter()
