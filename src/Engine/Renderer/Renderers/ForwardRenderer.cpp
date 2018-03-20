@@ -16,6 +16,9 @@
 //#include <Engine/Renderer/RenderTechnique/ShaderProgram.hpp>
 #include <Engine/Renderer/RenderTechnique/ShaderConfigFactory.hpp>
 
+#include <Engine/System/System.hpp>
+#include <Engine/Managers/SystemDisplay/SystemDisplay.hpp>
+
 #include <Engine/Renderer/RenderTechnique/RenderParameters.hpp>
 #include <Engine/Renderer/Light/Light.hpp>
 #include <Engine/Renderer/Light/DirLight.hpp>
@@ -52,7 +55,7 @@ namespace Ra {
         ForwardRenderer::ForwardRenderer()
         : Renderer()
         {
-            
+            m_enableCulling = true;
         }
         
         ForwardRenderer::~ForwardRenderer()
@@ -192,14 +195,37 @@ namespace Ra {
             // Updates used camera in culling filter
             m_cullingFilter.setFrostrum(renderData);
 
+
+            if (m_enableCulling)
+            {
+                std::cout << "Removing objects not visible by the camera" << std::endl;
+                std::cout << "Number of objects pre-treatment : " << m_fancyRenderObjects.size() << std::endl;
+                std::vector<RenderObjectPtr> filtered;
+                for (const auto &ro : m_fancyRenderObjects)
+                {
+                    std::cout << "\tTreating object " << ro->getName() << std::endl;
+                    if (m_cullingFilter.intersectsFrostrum(ro->getAabb()))
+                    {
+                        std::cout << "\t\tVisible" << std::endl;
+                        filtered.push_back(ro);
+                    }
+                    else
+                    {
+                        std::cout << "\t\tNot visible" << std::endl;
+                    }
+                }
+                m_fancyRenderObjects = filtered;
+                std::cout << "Number of objects post-treatment : " << m_fancyRenderObjects.size() << std::endl;
+            }
+
             // Set in RenderParam the configuration about ambiant lighting (instead of hard constant direclty in shaders)
             RenderParameters params;
             for (const auto &ro : m_fancyRenderObjects)
             {
-                if (m_enableCulling && m_cullingFilter.intersectsFrostrum(ro->getAabb()))
-                {
-                    ro->render(params, renderData, RenderTechnique::Z_PREPASS);
-                }
+             //   auto bb = Ra::Engine::DrawPrimitives::Primitive(Ra::Engine::SystemEntity::dbgCmp(), Ra::Engine::DrawPrimitives::AABB(ro->getAabb(), Core::Colors::Magenta()));
+             //   bb->setLifetime(1);
+             //   Ra::Engine::SystemEntity::dbgCmp()->addRenderObject(bb);
+                ro->render(params, renderData, RenderTechnique::Z_PREPASS);
             }
             
             // Light pass

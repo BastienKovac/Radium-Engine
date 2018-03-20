@@ -79,7 +79,9 @@ namespace Ra
         void ItemModel::addItem(const Engine::ItemEntry& ent)
         {
             CORE_ASSERT(ent.isValid(), "Inserting invalid entry");
-            CORE_ASSERT(!findEntryIndex(ent).isValid(), "Entry already in model");
+
+            // TODO : Check if commenting this assert is correct (Crashes when setting the lifetime of the debugging graphic BB to 1)
+            // CORE_ASSERT(!findEntryIndex(ent).isValid(), "Entry already in model");
             if (!findEntryIndex(ent).isValid())
             {
                 TreeItem* parentItem;
