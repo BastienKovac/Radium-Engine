@@ -203,15 +203,15 @@ namespace Ra {
                 std::vector<RenderObjectPtr> filtered;
                 for (const auto &ro : m_fancyRenderObjects)
                 {
-                    std::cout << "\tTreating object " << ro->getName() << std::endl;
+                    //std::cout << "\tTreating object " << ro->getName() << std::endl;
                     if (m_cullingFilter.intersectsFrostrum(ro->getAabb()))
                     {
-                        std::cout << "\t\tVisible" << std::endl;
+                        //std::cout << "\t\tVisible" << std::endl;
                         filtered.push_back(ro);
                     }
                     else
                     {
-                        std::cout << "\t\tNot visible" << std::endl;
+                        //std::cout << "\t\tNot visible" << std::endl;
                     }
                 }
                 m_fancyRenderObjects = filtered;
