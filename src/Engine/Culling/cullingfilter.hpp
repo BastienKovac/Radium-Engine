@@ -1,7 +1,6 @@
 #ifndef CULLINGFILTER_H
 #define CULLINGFILTER_H
 
-#include <memory>
 #include <vector>
 
 #include <Eigen/Core>
@@ -30,17 +29,10 @@ namespace Ra
             bool intersects(const Core::Aabb aabb);
 
         private:
-            Scalar findMax (const int dim, const Core::Aabb aabb);
-            Scalar findMin (const int dim, const Core::Aabb aabb);
-            void updateMinMax(Core::Vector4 point);
-            bool intersectsDim(int i, const Core::Aabb aabb);
+
             // Points and planes of the Frostrum
-            Core::Vector4 m_a, m_b, m_c, m_d, m_e, m_f, m_g, m_h;
-            // Top, bottom, left, right, near, far
-            Core::Vector3 planesNormals[6];
-            Scalar planesOffsets [6];
-            // Min and max values of the frostum for each dimension (shall replace the 8 points above).
-            Scalar max[3], min[3];
+            Core::Vector4 m_points[8];
+            Core::Vector4 m_planes[6];
 
         };
 

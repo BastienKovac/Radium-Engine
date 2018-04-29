@@ -20,101 +20,85 @@ namespace Ra
         {
 
         }
-        
-        Scalar Frostrum::findMax (const int dim, const Core::Aabb aabb)
-        {
-            return aabb.max()[dim];
-        }
-        
-        Scalar Frostrum::findMin (const int dim, const Core::Aabb aabb)
-        {
-            return aabb.min()[dim];
-        }
-        
-        bool Frostrum::intersectsDim(int i, const Core::Aabb aabb)
-        {
-            // Step of the SAT algorithm, handle a single dimension
-            return (findMin(i, aabb) < max[i]) && (findMax(i, aabb) > min[i]);
-        }
-
         bool Frostrum::intersects(const Core::Aabb aabb)
         {
-            // TODO : Intersection algorithm goes here
-            // Using SAT algorithm, which induce some inaccuracy the closer we get to the near plane,
-            // as it is used to get intersections between boundary boxes (and frostum isn't a box)
-            return intersectsDim(0, aabb) && intersectsDim(1, aabb) && intersectsDim(2, aabb);
+            int out = 0;
+            for(int i = 0 ; i < 6 ; i++)
+            {
+                out = 0;
+                out += (( m_planes[i].dot(Core::Vector4(aabb.min()[0], aabb.min()[1], aabb.min()[2], 1.0f)) < 0.0 ) ? 1 : 0 );
+                out += (( m_planes[i].dot(Core::Vector4(aabb.max()[1], aabb.min()[1], aabb.min()[2], 1.0f)) < 0.0 ) ? 1 : 0 );
+                out += (( m_planes[i].dot(Core::Vector4(aabb.min()[0], aabb.max()[1], aabb.min()[2], 1.0f)) < 0.0 ) ? 1 : 0 );
+                out += (( m_planes[i].dot(Core::Vector4(aabb.max()[0], aabb.max()[1], aabb.min()[2], 1.0f)) < 0.0 ) ? 1 : 0 );
+                out += (( m_planes[i].dot(Core::Vector4(aabb.min()[0], aabb.min()[1], aabb.max()[2], 1.0f)) < 0.0 ) ? 1 : 0 );
+                out += (( m_planes[i].dot(Core::Vector4(aabb.max()[0], aabb.min()[1], aabb.max()[2], 1.0f)) < 0.0 ) ? 1 : 0 );
+                out += (( m_planes[i].dot(Core::Vector4(aabb.min()[0], aabb.max()[1], aabb.max()[2], 1.0f)) < 0.0 ) ? 1 : 0 );
+                out += (( m_planes[i].dot(Core::Vector4(aabb.max()[0], aabb.max()[1], aabb.max()[2], 1.0f)) < 0.0 ) ? 1 : 0 );
 
-            /*// If the first test pass, this one use raycast to get rid of the inaccuracy mentioned above
-            int count = 0;
-            for (int i = 0; i < 6; i++) {
-                if(Core::RayCast::vsPlane(new Core::Ray(0.0f, 0.0f, 1.0f), planesOffsets[i], planesNormals[i], NULL))
-                    count++;
-            }*/
-            
-            //return true; //(count%2 == 1);
-        }
+                if(out == 8) return false;
+            }
 
-        void Frostrum::updateMinMax(Core::Vector4 point)
-        {
-            if(point[0] < min[0]) min[0] = point[0];
-            if(point[1] < min[1]) min[1] = point[1];
-            if(point[2] < min[2]) min[2] = point[2];
-            if(point[0] > max[0]) max[0] = point[0];
-            if(point[1] > max[1]) max[1] = point[1];
-            if(point[2] > max[2]) max[2] = point[2];
+            out = 0; for (int i = 0 ; i < 8 ; i++) out += ((m_points[i][0] > aabb.max()[0]) ? 1 : 0); if (out == 8) return false;
+            out = 0; for (int i = 0 ; i < 8 ; i++) out += ((m_points[i][0] < aabb.min()[0]) ? 1 : 0); if (out == 8) return false;
+            out = 0; for (int i = 0 ; i < 8 ; i++) out += ((m_points[i][1] > aabb.max()[1]) ? 1 : 0); if (out == 8) return false;
+            out = 0; for (int i = 0 ; i < 8 ; i++) out += ((m_points[i][1] < aabb.min()[1]) ? 1 : 0); if (out == 8) return false;
+            out = 0; for (int i = 0 ; i < 8 ; i++) out += ((m_points[i][2] > aabb.max()[2]) ? 1 : 0); if (out == 8) return false;
+            out = 0; for (int i = 0 ; i < 8 ; i++) out += ((m_points[i][2] < aabb.min()[2]) ? 1 : 0); if (out == 8) return false;
+
+            return true;
         }
 
         void Frostrum::updateFrostrum(const RenderData &data)
         {
-            // Compute the 8 points of the frostrum from the RenderData and the max and min for the SAT algorithm
+            // Compute the 8 points of the frostrum from the RenderData
             Core::Matrix4 inverseView = data.viewMatrix.inverse();
             Core::Matrix4 inverseProj = data.projMatrix.inverse();
 
-            m_a = inverseProj * inverseView * Core::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-            //std::cout << "A : " << std::endl << m_a << std::endl;
-            m_a /= m_a[3];
-            max[0] = m_a[0];
-            max[1] = m_a[1];
-            max[2] = m_a[2];
-            min[0] = m_a[0];
-            min[1] = m_a[1];
-            min[2] = m_a[2];
-            m_b = inverseView * inverseProj *  Core::Vector4f(1.0f, 1.0f, -1.0f, 1.0f);
-            //std::cout << "B : " << std::endl << m_b << std::endl;
-            m_b /= m_b[3];
-            updateMinMax(m_b);
-            m_c = inverseView * inverseProj *  Core::Vector4(1.0f, -1.0f, 1.0f, 1.0f);
-            //std::cout << "C : " << std::endl << m_c << std::endl;
-            m_c /= m_c[3];
-            updateMinMax(m_c);
-            m_d = inverseView * inverseProj *  Core::Vector4(1.0f, -1.0f, -1.0f, 1.0f);
-            //std::cout << "D : " << std::endl << m_d << std::endl;
-            m_d /= m_d[3];
-            updateMinMax(m_d);
-            m_e = inverseView * inverseProj *  Core::Vector4(-1.0f, 1.0f, 1.0f, 1.0f);
-            //std::cout << "E : " << std::endl << m_e << std::endl;
-            m_e /= m_e[3];
-            updateMinMax(m_e);
-            m_f = inverseView * inverseProj *  Core::Vector4(-1.0f, 1.0f, -1.0f, 1.0f);
-            //std::cout << "F : " << std::endl << m_f << std::endl;
-            m_f /= m_f[3];
-            updateMinMax(m_f);
-            m_g = inverseView * inverseProj *  Core::Vector4(-1.0f, -1.0f, 1.0f, 1.0f);
-            //std::cout << "G : " << std::endl << m_g << std::endl;
-            m_g /= m_g[3];
-            updateMinMax(m_g);
-            m_h = inverseView * inverseProj *  Core::Vector4(-1.0f, -1.0f, -1.0f, 1.0f);
-            //std::cout << "H : " << std::endl << m_h << std::endl;
-            m_h /= m_h[3];
-            updateMinMax(m_h);
+            // Points
+            m_points[0] = inverseView * inverseProj * Core::Vector4(- 1.0f, - 1.0f, - 1.0f, 1.0f);
+            m_points[1] = inverseView * inverseProj * Core::Vector4(- 1.0f, - 1.0f, 1.0f, 1.0f);
+            m_points[2] = inverseView * inverseProj * Core::Vector4(- 1.0f, 1.0f, - 1.0f, 1.0f);
+            m_points[3] = inverseView * inverseProj * Core::Vector4(- 1.0f, 1.0f, 1.0f, 1.0f);
+            m_points[4] = inverseView * inverseProj * Core::Vector4(1.0f, - 1.0f, - 1.0f, 1.0f);
+            m_points[5] = inverseView * inverseProj * Core::Vector4(1.0f, - 1.0f, 1.0f, 1.0f);
+            m_points[6] = inverseView * inverseProj * Core::Vector4(1.0f, 1.0f, - 1.0f, 1.0f);
+            m_points[7] = inverseView * inverseProj * Core::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
-            std::cout << "Min Frostrum : {" << min[0] << ", " << min[1] << ", " << min[2] << "}" << std::endl;
-            std::cout << "Max Frostrum : {" << max[0] << ", " << max[1] << ", " << max[2] << "}" << std::endl;
+            m_points[0] /= m_points[0][3];
+            m_points[1] /= m_points[1][3];
+            m_points[2] /= m_points[2][3];
+            m_points[3] /= m_points[3][3];
+            m_points[4] /= m_points[4][3];
+            m_points[5] /= m_points[5][3];
+            m_points[6] /= m_points[6][3];
+            m_points[7] /= m_points[7][3];
 
-            auto aabb = Core::Aabb(Core::Vector3(min[0], min[1], min[2]), Core::Vector3(max[0], max[1], max[2]));
-            auto bb = Ra::Engine::DrawPrimitives::Primitive(Ra::Engine::SystemEntity::dbgCmp(), Ra::Engine::DrawPrimitives::AABB(aabb, Core::Colors::Magenta()));
-            bb->setLifetime(1);
-            Ra::Engine::SystemEntity::dbgCmp()->addRenderObject(bb);
+            // Planes
+            Core::Vector3 temp;
+            temp = (m_points[1] - m_points[0]).head<3>().cross((m_points[2] - m_points[0]).head<3>());
+            m_planes[0] = Core::Vector4(temp[0], temp[1], temp[2], 0.0f);
+            m_planes[0][3] = - m_planes[0].dot(m_points[0]);
+
+            temp = (m_points[5] - m_points[4]).head<3>().cross((m_points[0] - m_points[4]).head<3>());
+            m_planes[1] = Core::Vector4(temp[0], temp[1], temp[2], 0.0f);
+            m_planes[1][3] = - m_planes[1].dot(m_points[4]);
+
+            temp = (m_points[7] - m_points[6]).head<3>().cross((m_points[4] - m_points[6]).head<3>());
+            m_planes[2] = Core::Vector4(temp[0], temp[1], temp[2], 0.0f);
+            m_planes[2][3] = - m_planes[2].dot(m_points[6]);
+
+            temp = (m_points[3] - m_points[2]).head<3>().cross((m_points[6] - m_points[2]).head<3>());
+            m_planes[3] = Core::Vector4(temp[0], temp[1], temp[2], 0.0f);
+            m_planes[3][3] = - m_planes[3].dot(m_points[2]);
+
+            temp = (m_points[2] - m_points[0]).head<3>().cross((m_points[4] - m_points[0]).head<3>());
+            m_planes[4] = Core::Vector4(temp[0], temp[1], temp[2], 0.0f);
+            m_planes[4][3] = - m_planes[4].dot(m_points[0]);
+
+            temp = (m_points[3] - m_points[7]).head<3>().cross((m_points[5] - m_points[7]).head<3>());
+            m_planes[5] = Core::Vector4(temp[0], temp[1], temp[2], 0.0f);
+            m_planes[5][3] = - m_planes[5].dot(m_points[7]);
+
         }
 
         CullingFilter::CullingFilter()
