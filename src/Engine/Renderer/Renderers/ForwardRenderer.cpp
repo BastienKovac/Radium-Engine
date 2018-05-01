@@ -55,7 +55,8 @@ namespace Ra {
         ForwardRenderer::ForwardRenderer()
         : Renderer()
         {
-            m_enableCulling = true;
+            m_cullingEnabled = true;
+            m_cullingFixed = false;
         }
         
         ForwardRenderer::~ForwardRenderer()
@@ -191,13 +192,13 @@ namespace Ra {
             GL_ASSERT(glDisable(GL_BLEND));
             
             GL_ASSERT(glPointSize(3.));
-            
-            // Updates used camera in culling filter
-            m_cullingFilter.setFrostrum(renderData);
 
-
-            if (m_enableCulling)
+            if (m_cullingEnabled)
             {
+                // Updates used camera in culling filter
+                if(!m_cullingFixed)
+                    m_cullingFilter.setFrostrum(renderData);
+
                 std::cout << "Removing objects not visible by the camera" << std::endl;
                 std::cout << "Number of objects pre-treatment : " << m_fancyRenderObjects.size() << std::endl;
                 std::vector<RenderObjectPtr> filtered;

@@ -27,7 +27,7 @@
      <x>0</x>
      <y>0</y>
      <width>1350</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFILE">
@@ -57,7 +57,8 @@
     <property name="title">
      <string>Culling</string>
     </property>
-    <addaction name="actionEnabled"/>
+    <addaction name="actionEnable_culling"/>
+    <addaction name="actionFix_culling"/>
    </widget>
    <addaction name="menuFILE"/>
    <addaction name="menuMisc"/>
@@ -716,9 +717,23 @@
     <string>Ctrl+Shift+O</string>
    </property>
   </action>
-  <action name="actionEnabled">
+  <action name="actionEnable_culling">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Enabled</string>
+   </property>
+  </action>
+  <action name="actionFix_culling">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Fixed</string>
    </property>
   </action>
  </widget>
@@ -732,6 +747,8 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../../../../icons.qrc"/>
+  <include location="../../../../icons.qrc"/>
   <include location="../../../../icons.qrc"/>
  </resources>
  <connections>

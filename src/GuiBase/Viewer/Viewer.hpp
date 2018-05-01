@@ -138,6 +138,9 @@ namespace Ra
 
             void enableDebug();
 
+            void enableCulling(bool enabled);
+            void fixCulling(bool fixed);
+
         signals:
             void glInitialized();               //! Emitted when GL context is ready. We except call to addRenderer here
             void rendererReady();               //! Emitted when the rendered is correctly initialized

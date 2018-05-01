@@ -126,7 +126,17 @@ namespace Ra
                                             std::cerr << " -> " << call.returnValue->asString();
                                         }
                                         std::cerr << std::endl;
-                                    });
+        });
+    }
+
+    void Gui::Viewer::enableCulling(bool enabled)
+    {
+        m_currentRenderer->enableCulling(enabled);
+    }
+
+    void Gui::Viewer::fixCulling(bool fixed)
+    {
+        m_currentRenderer->fixCulling(fixed);
     }
 
     void Gui::Viewer::initializeGL()

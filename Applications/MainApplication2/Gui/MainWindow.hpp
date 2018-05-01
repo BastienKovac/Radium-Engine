@@ -137,6 +137,12 @@ namespace Ra
             /// Slot for the "material editor"
             void openMaterialEditor();
 
+            /// Slot for enabling/disabling culling
+            void enableCulling();
+
+            /// Slot for fixing/releasing culling
+            void fixCulling();
+
             /// Slot for the user changing the current shader
             void changeRenderObjectShader(const QString& shaderName);
 

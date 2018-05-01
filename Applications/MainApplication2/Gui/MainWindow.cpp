@@ -82,6 +82,8 @@ namespace Gui
         connect(actionOpenMesh, &QAction::triggered, this, &MainWindow::loadFile);
         connect(actionReload_Shaders, &QAction::triggered, m_viewer, &Viewer::reloadShaders);
         connect(actionOpen_Material_Editor, &QAction::triggered, this, &MainWindow::openMaterialEditor);
+        connect(actionEnable_culling, &QAction::toggled, this, &MainWindow::enableCulling);
+        connect(actionFix_culling, &QAction::toggled, this, &MainWindow::fixCulling);
 
         // Toolbox setup
         connect(actionToggle_Local_Global, &QAction::toggled, m_viewer->getGizmoManager(), &GizmoManager::setLocal);
@@ -440,6 +442,16 @@ namespace Gui
     void Gui::MainWindow::openMaterialEditor()
     {
         m_materialEditor->show();
+    }
+
+    void MainWindow::enableCulling()
+    {
+        m_viewer->enableCulling(actionEnable_culling->isChecked());
+    }
+
+    void MainWindow::fixCulling()
+    {
+        m_viewer->fixCulling(actionFix_culling->isChecked());
     }
 
     void Gui::MainWindow::updateUi(Plugins::RadiumPluginInterface* plugin)
