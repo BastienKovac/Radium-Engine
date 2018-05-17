@@ -57,7 +57,8 @@
     <property name="title">
      <string>Culling</string>
     </property>
-    <addaction name="actionEnabled"/>
+    <addaction name="actionEnable_culling"/>
+    <addaction name="actionFix_culling"/>
    </widget>
    <addaction name="menuFILE"/>
    <addaction name="menuMisc"/>
@@ -752,9 +753,20 @@
     <string>Ctrl+Shift+O</string>
    </property>
   </action>
-  <action name="actionEnabled">
+  <action name="actionEnable_culling">
    <property name="text">
     <string>Enabled</string>
+   </property>
+   <property name="toolTip">
+    <string>Enable or disable the culling</string>
+   </property>
+  </action>
+  <action name="actionFix_culling">
+   <property name="text">
+    <string>Fix</string>
+   </property>
+   <property name="toolTip">
+    <string>Fix or release the culling camera</string>
    </property>
   </action>
  </widget>

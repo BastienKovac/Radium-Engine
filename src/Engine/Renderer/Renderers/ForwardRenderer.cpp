@@ -55,8 +55,7 @@ namespace Ra {
         ForwardRenderer::ForwardRenderer()
         : Renderer()
         {
-            m_cullingEnabled = true;
-            m_cullingFixed = false;
+
         }
         
         ForwardRenderer::~ForwardRenderer()
@@ -192,32 +191,6 @@ namespace Ra {
             GL_ASSERT(glDisable(GL_BLEND));
             
             GL_ASSERT(glPointSize(3.));
-
-            if (m_cullingEnabled)
-            {
-                // Updates used camera in culling filter
-                if(!m_cullingFixed)
-                    m_cullingFilter.setFrostrum(renderData);
-
-                std::cout << "Removing objects not visible by the camera" << std::endl;
-                std::cout << "Number of objects pre-treatment : " << m_fancyRenderObjects.size() << std::endl;
-                std::vector<RenderObjectPtr> filtered;
-                for (const auto &ro : m_fancyRenderObjects)
-                {
-                    //std::cout << "\tTreating object " << ro->getName() << std::endl;
-                    if (m_cullingFilter.intersectsFrostrum(ro->getAabb()))
-                    {
-                        //std::cout << "\t\tVisible" << std::endl;
-                        filtered.push_back(ro);
-                    }
-                    else
-                    {
-                        //std::cout << "\t\tNot visible" << std::endl;
-                    }
-                }
-                m_fancyRenderObjects = filtered;
-                std::cout << "Number of objects post-treatment : " << m_fancyRenderObjects.size() << std::endl;
-            }
 
             // Set in RenderParam the configuration about ambiant lighting (instead of hard constant direclty in shaders)
             RenderParameters params;

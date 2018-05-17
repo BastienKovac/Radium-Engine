@@ -10,7 +10,7 @@
 #include <Engine/Renderer/RenderObject/RenderObjectManager.hpp>
 #include <Engine/Renderer/RenderTechnique/RenderTechnique.hpp>
 #include <Engine/Renderer/RenderTechnique/ShaderConfigFactory.hpp>
-#include <Engine/Renderer/Renderers/ForwardRenderer.hpp>
+#include <Engine/Renderer/Renderers/CullingRenderer.hpp>
 #include <Gui/MaterialEditor.hpp>
 #include <GuiBase/TreeModel/EntityTreeModel.hpp>
 #include <GuiBase/Utils/KeyMappingManager.hpp>
@@ -18,6 +18,8 @@
 #include <GuiBase/Viewer/CameraInterface.hpp>
 #include <GuiBase/Viewer/Gizmo/GizmoManager.hpp>
 #include <PluginBase/RadiumPluginInterface.hpp>
+
+#include <GuiBase/Viewer/CullingViewer/CullingViewer.hpp>
 
 #include <QComboBox>
 #include <QFileDialog>
@@ -39,8 +41,7 @@ namespace Gui
 
         setupUi(this);
 
-
-        m_viewer = new Viewer();
+        m_viewer = new CullingViewer();
         m_viewer->createGizmoManager();
         m_viewer->setObjectName(QStringLiteral("m_viewer"));
 
@@ -82,6 +83,8 @@ namespace Gui
         connect(actionOpenMesh, &QAction::triggered, this, &MainWindow::loadFile);
         connect(actionReload_Shaders, &QAction::triggered, m_viewer, &Viewer::reloadShaders);
         connect(actionOpen_Material_Editor, &QAction::triggered, this, &MainWindow::openMaterialEditor);
+        connect(actionEnable_culling, &QAction::toggled, this, &MainWindow::enableCulling);
+        connect(actionFix_culling, &QAction::toggled, this, &MainWindow::fixCulling);
 
         // Toolbox setup
         connect(actionToggle_Local_Global, &QAction::toggled, m_viewer->getGizmoManager(), &GizmoManager::setLocal);
@@ -254,7 +257,7 @@ namespace Gui
         return m_selectionManager;
     }
 
-   void Gui::MainWindow::toggleCirclePicking( bool on )
+    void Gui::MainWindow::toggleCirclePicking( bool on )
     {
         centralWidget()->setMouseTracking( on );
     }
@@ -442,6 +445,16 @@ namespace Gui
         m_materialEditor->show();
     }
 
+    void MainWindow::enableCulling()
+    {
+        m_viewer->enableCulling(actionEnable_culling->isChecked());
+    }
+
+    void MainWindow::fixCulling()
+    {
+        m_viewer->fixCulling(actionFix_culling->isChecked());
+    }
+
     void Gui::MainWindow::updateUi(Plugins::RadiumPluginInterface* plugin)
     {
         QString tabName;
@@ -572,8 +585,8 @@ namespace Gui
     void MainWindow::onGLInitialized()
     {
         // set default renderer once OpenGL is configured
-        std::shared_ptr<Engine::Renderer> e (new Engine::ForwardRenderer());
-        addRenderer("Forward Renderer", e);
+        std::shared_ptr<Engine::Renderer> e (new Engine::CullingRenderer());
+        addRenderer("Culling Renderer", e);
     }
 
 } // namespace Gui

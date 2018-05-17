@@ -143,15 +143,6 @@ namespace Ra
                 m_postProcessEnabled = enabled;
             }
 
-            inline void enableCulling(bool enabled)
-            {
-                m_cullingEnabled = enabled;
-            }
-
-            inline void fixCulling(bool fixed)
-            {
-                m_cullingFixed = fixed;
-            }
             /**
              * @brief Tell the renderer it needs to render.
              * This method does the following steps :
@@ -375,11 +366,6 @@ namespace Ra
             bool m_drawDebug;           // Should we render debug stuff ?
             bool m_wireframe;           // Are we rendering in "real" wireframe mode
             bool m_postProcessEnabled;  // Should we do post processing ?
-            bool m_cullingEnabled;       // Should we do culling ?
-            bool m_cullingFixed;       // Should we fix culling position ?
-
-            // Culling filter (basic)
-            CullingFilter m_cullingFilter;
 
         private:
             // Qt has the nice idea to bind an fbo before giving you the opengl context,
