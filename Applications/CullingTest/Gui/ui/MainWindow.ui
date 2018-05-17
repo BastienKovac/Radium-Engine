@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1350</width>
-    <height>877</height>
+    <height>888</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,9 +19,7 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="m_centralWidget">
-   <zorder>nb_objects_render</zorder>
-  </widget>
+  <widget class="QWidget" name="m_centralWidget"/>
   <widget class="QStatusBar" name="_statusBar"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -455,9 +453,9 @@
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QLabel" name="label_3">
+                 <widget class="QLabel" name="nb_objects_scene_result">
                   <property name="text">
-                   <string>TextLabel</string>
+                   <string/>
                   </property>
                  </widget>
                 </item>
@@ -468,14 +466,14 @@
                 <item row="1" column="0">
                  <widget class="QLabel" name="nb_objects_render">
                   <property name="text">
-                   <string>Number of objects renders :</string>
+                   <string>Number of objects rendered : </string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QLabel" name="label_9">
+                 <widget class="QLabel" name="nb_objects_render_result">
                   <property name="text">
-                   <string>TextLabel</string>
+                   <string/>
                   </property>
                  </widget>
                 </item>
@@ -730,7 +728,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="../../../../icons.qrc">
      <normaloff>:/Assets/Images/rec.png</normaloff>
      <normalon>:/Assets/Images/rec_on.png</normalon>:/Assets/Images/rec.png</iconset>
    </property>
@@ -769,7 +767,9 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../../../../icons.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionExit</sender>
