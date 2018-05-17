@@ -16,11 +16,11 @@ namespace Ra
     namespace Engine
     {
 
-        Frostrum::Frostrum()
+        Fustrum::Fustrum()
         {
 
         }
-        bool Frostrum::intersects(const Core::Aabb aabb)
+        bool Fustrum::intersects(const Core::Aabb aabb)
         {
             int out = 0;
             for(int i = 0 ; i < 6 ; i++)
@@ -48,7 +48,7 @@ namespace Ra
             return true;
         }
 
-        void Frostrum::updateFrostrum(const RenderData &data)
+        void Fustrum::updateFustrum(const RenderData &data)
         {
             // Compute the 8 points of the frostrum from the RenderData
             Core::Matrix4 inverseView = data.viewMatrix.inverse();
@@ -106,14 +106,14 @@ namespace Ra
 
         }
 
-        void CullingFilter::setFrostrum(const RenderData &data)
+        void CullingFilter::setFustrum(const RenderData &data)
         {
-            m_frostrum.updateFrostrum(data);
+            m_fustrum.updateFustrum(data);
         }
 
-        bool CullingFilter::intersectsFrostrum(const Core::Aabb aabb)
+        bool CullingFilter::intersectsFustrum(const Core::Aabb aabb)
         {
-            return m_frostrum.intersects(aabb);
+            return m_fustrum.intersects(aabb);
         }
 
     }

@@ -19,12 +19,12 @@ namespace Ra
     namespace Engine
     {
 
-        class Frostrum
+        class Fustrum
         {
         public:
-            Frostrum();
+            Fustrum();
 
-            void updateFrostrum(const RenderData &data);
+            void updateFustrum(const RenderData &data);
 
             bool intersects(const Core::Aabb aabb);
 
@@ -41,13 +41,13 @@ namespace Ra
         public:
             CullingFilter();
 
-            bool intersectsFrostrum(const Core::Aabb aabb);
+            bool intersectsFustrum(const Core::Aabb aabb);
 
-            void setFrostrum(const RenderData &data);
+            void setFustrum(const RenderData &data);
 
         private:
 
-            Frostrum m_frostrum;
+            Fustrum m_fustrum;
         };
 
     } // namespace Engine

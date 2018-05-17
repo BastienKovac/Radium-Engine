@@ -101,14 +101,14 @@ namespace Ra
             {
                 // Updates used camera in culling filter
                 if (!m_cullingFixed)
-                    m_cullingFilter.setFrostrum(renderData);
+                    m_cullingFilter.setFustrum(renderData);
 
                 std::cout << "Number of objects before culling : " << m_fancyRenderObjects.size() << std::endl;
 
                 std::vector<RenderObjectPtr> filtered;
                 for (const auto &ro : m_fancyRenderObjects)
                 {
-                    if (m_cullingFilter.intersectsFrostrum(ro->getAabb()))
+                    if (m_cullingFilter.intersectsFustrum(ro->getAabb()))
                     {
                         filtered.push_back(ro);
                     }
